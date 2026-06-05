@@ -11,13 +11,15 @@ let client: InstanceType<typeof Redis> | null = null;
 
 if (kvUrl && kvToken) {
   client = new Redis({ url: kvUrl, token: kvToken });
+} else if (redisUrl && redisToken) {
+  client = new Redis({ url: redisUrl, token: redisToken });
 } else if (redisUrl) {
   const url = new URL(redisUrl);
-  const tokenFromUrl = url.password || url.username || "";
-  const resolvedToken = redisToken || tokenFromUrl || "";
-  url.password = "";
+  const token = url.password || url.username || "";
   url.username = "";
-  client = new Redis({ url: url.toString(), token: resolvedToken });
+  url.password = "";
+  const httpsUrl = `https://${url.hostname}`;
+  client = new Redis({ url: httpsUrl, token });
 }
 const isProduction = process.env.NODE_ENV === "production";
 
