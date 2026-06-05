@@ -1,90 +1,64 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, usePublicClient, useReadContract } from "wagmi";
 import { CONTRACTS, electionAbi } from "@/lib/contracts";
 import { CircleNotch, Plus, Users, HandsClapping, Calendar } from "@phosphor-icons/react";
 import Link from "next/link";
 
-interface ElectionInfo {
-  id: number;
-  title: string;
-  description: string;
-  startTime: number;
-  endTime: number;
-  totalCandidates: number;
-  isActive: boolean;
-}
-
 export default function ElectionsPage() {
   const { isConnected } = useAccount();
-  const [elections, setElections] = useState<ElectionInfo[]>([]);
+  const publicClient = usePublicClient();
+  const [elections, setElections] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data: electionIds, error: idsError } = useReadContract({
+  const { data: electionIds } = useReadContract({
     address: CONTRACTS.CampusElection,
     abi: electionAbi,
     functionName: "getAllElectionIds",
   });
 
-  const { data: contractRead } = useReadContract({
-    address: CONTRACTS.CampusElection,
-    abi: electionAbi,
-    functionName: "getElectionInfo",
-    args: electionIds && electionIds.length > 0 ? [BigInt(electionIds[0])] : undefined,
-    query: { enabled: !!electionIds && electionIds.length > 0 },
-  });
-
   useEffect(() => {
-    const fetchElections = async () => {
-      if (!electionIds || electionIds.length === 0) {
+    const fetchAll = async () => {
+      if (!publicClient || !electionIds || electionIds.length === 0) {
+        setElections([]);
         setIsLoading(false);
         return;
       }
 
-      const results: ElectionInfo[] = [];
       const now = Math.floor(Date.now() / 1000);
+      const results: any[] = [];
 
       for (const id of Array.from(electionIds)) {
         try {
           const electionId = Number(id);
-          let title = `Election #${electionId}`;
-          let description = "";
-          let startTime = 0;
-          let endTime = 0;
-          let totalCandidates = 0;
-          let isActive = false;
-          
-          if (contractRead && electionId === Number(electionIds[0])) {
-            const [t, d, s, e, tc, f] = contractRead as [string, string, bigint, bigint, bigint, boolean];
-            title = t || title;
-            description = d || description;
-            startTime = Number(s);
-            endTime = Number(e);
-            totalCandidates = Number(tc);
-            isActive = startTime <= now && endTime >= now;
-          }
-
+          const data = await publicClient.readContract({
+            address: CONTRACTS.CampusElection,
+            abi: electionAbi,
+            functionName: "getElectionInfo",
+            args: [BigInt(electionId)],
+          });
+          const [title, description, startTime, endTime, totalCandidates, isFinalized] = data as [string, string, bigint, bigint, bigint, boolean];
+          const startTimeNum = Number(startTime);
+          const endTimeNum = Number(endTime);
           results.push({
             id: electionId,
             title: title || `Election #${electionId}`,
             description,
-            startTime,
-            endTime,
-            totalCandidates,
-            isActive,
+            startTime: startTimeNum,
+            endTime: endTimeNum,
+            totalCandidates: Number(totalCandidates),
+            isActive: startTimeNum <= now && endTimeNum >= now,
           });
         } catch (err) {
           console.error(err);
         }
       }
-
       setElections(results);
       setIsLoading(false);
     };
-
-    fetchElections();
-  }, [electionIds, contractRead]);
+    fetchAll();
+  }, [publicClient, electionIds]);
 
   if (isLoading) {
     return (

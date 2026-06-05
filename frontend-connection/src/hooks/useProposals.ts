@@ -26,39 +26,30 @@ export function useProposals() {
       setError(null);
       
       const blockNumber = await publicClient.getBlockNumber();
-      
-      // Contract was deployed around block 10990700 on Sepolia.
-      // We can safely fetch from a bit before that.
-      const DEPLOYMENT_BLOCK = BigInt(10990000);
-      const fromBlock = DEPLOYMENT_BLOCK;
+      const BLOCKS_BACK = 50000n;
+      const fromBlock = blockNumber > BLOCKS_BACK ? blockNumber - BLOCKS_BACK : 0n;
 
-      try {
-        const logs = await publicClient.getContractEvents({
-          address: CONTRACTS.CampusGovernor,
-          abi: governorAbi,
-          eventName: "ProposalCreated",
-          fromBlock,
-          toBlock: blockNumber,
-        });
+      const logs = await publicClient.getContractEvents({
+        address: CONTRACTS.CampusGovernor,
+        abi: governorAbi,
+        eventName: "ProposalCreated",
+        fromBlock,
+        toBlock: blockNumber,
+      });
 
-        const proposalData: Proposal[] = logs.map((log) => ({
-          proposalId: (log.args as any).proposalId.toString(),
-          proposer: (log.args as any).proposer,
-          description: (log.args as any).description,
-          voteStart: (log.args as any).voteStart.toString(),
-          voteEnd: (log.args as any).voteEnd.toString(),
-        }));
+      const proposalData: Proposal[] = logs.map((log) => ({
+        proposalId: (log.args as any).proposalId.toString(),
+        proposer: (log.args as any).proposer,
+        description: (log.args as any).description,
+        voteStart: (log.args as any).voteStart.toString(),
+        voteEnd: (log.args as any).voteEnd.toString(),
+      }));
 
-        setProposals(proposalData.reverse());
-      } catch (fetchError) {
-        console.warn("Failed to fetch proposals from RPC:", fetchError);
-        setProposals([]);
-        setError("RPC limit exceeded or connection failed. Try refreshing or changing RPC.");
-      }
+      setProposals(proposalData.reverse());
     } catch (err) {
       console.error("Failed to fetch proposals:", err);
       setProposals([]);
-      setError("Unable to load proposals.");
+      setError("Unable to load proposals. RPC may be rate limited.");
     } finally {
       setIsLoading(false);
     }
