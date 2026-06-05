@@ -3,8 +3,8 @@
 
 export const CONTRACTS = {
   CampusSoulboundNFT: "0x9Fa19CD9D9a8c8CFE7030384aE42bF3E2b58b10F" as const,
-  TimelockController: "0xAA5E871ADC9A01dC4A3CC78a3E9841876844357E" as const,
-  CampusGovernor: "0x7B88e348c691f371aae4b63Eb6314366D7cc12e5" as const,
+  TimelockController: "0x64F3F2c186B0F78f0Ddf39d615d7b8cE7915761D" as const,
+  CampusGovernor: "0xB04a8f7D499CA8DeE37B0DA005D09B499C52Cc45" as const,
   CampusElection: "0x23Bf27D39748bB77A4fbbD9740B1FEE067081E97" as const,
 } as const;
 
@@ -199,6 +199,16 @@ export const governorAbi = [
       { name: "weight", type: "uint256", indexed: false },
       { name: "reason", type: "string", indexed: false },
     ],
+  },
+  {
+    name: "hasVoted",
+    type: "function",
+    stateMutability: "view",
+    inputs: [
+      { name: "proposalId", type: "uint256" },
+      { name: "account", type: "address" },
+    ],
+    outputs: [{ name: "", type: "bool" }],
   },
   {
     name: "NoCampusPass",

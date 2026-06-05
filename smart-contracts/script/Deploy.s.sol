@@ -29,7 +29,7 @@ contract Deploy is Script {
 
         vm.startBroadcast(deployerPrivateKey);
         TimelockController timelock = new TimelockController(
-            86400,              // minDelay: 1 day
+            60,                 // minDelay: 60 detik (untuk hackathon demo)
             initialProposers,   // proposers
             executors,          // executors
             vm.addr(deployerPrivateKey) // admin

@@ -7,15 +7,15 @@ import { Clock, CheckCircle, XCircle, MinusCircle, ArrowLeft, CircleNotch, Warni
 import { VoteButton } from "@/components/dao/VoteButton";
 import Link from "next/link";
 
-const statusMap: Record<number, { label: string; color: string }> = {
-  0: { label: "Pending", color: "bg-amber-500 text-amber-500 border-amber-500/20" },
-  1: { label: "Active", color: "bg-green-500 text-green-500 border-green-500/20" },
-  2: { label: "Canceled", color: "bg-gray-500 text-gray-500 border-gray-500/20" },
-  3: { label: "Defeated", color: "bg-red-500 text-red-500 border-red-500/20" },
-  4: { label: "Succeeded", color: "bg-blue-500 text-blue-500 border-blue-500/20" },
-  5: { label: "Queued", color: "bg-purple-500 text-purple-500 border-purple-500/20" },
-  6: { label: "Expired", color: "bg-gray-400 text-gray-400 border-gray-400/20" },
-  7: { label: "Executed", color: "bg-indigo-500 text-indigo-500 border-indigo-500/20" },
+const statusMap: Record<number, { label: string; color: string; dot: string }> = {
+  0: { label: "Pending", color: "bg-amber-500/10 text-amber-400 border-amber-500/20", dot: "bg-amber-500" },
+  1: { label: "Active", color: "bg-green-500/10 text-green-400 border-green-500/20", dot: "bg-green-500" },
+  2: { label: "Canceled", color: "bg-gray-500/10 text-gray-400 border-gray-500/20", dot: "bg-gray-500" },
+  3: { label: "Defeated", color: "bg-red-500/10 text-red-400 border-red-500/20", dot: "bg-red-500" },
+  4: { label: "Succeeded", color: "bg-blue-500/10 text-blue-400 border-blue-500/20", dot: "bg-blue-500" },
+  5: { label: "Queued", color: "bg-purple-500/10 text-purple-400 border-purple-500/20", dot: "bg-purple-500" },
+  6: { label: "Expired", color: "bg-gray-400/10 text-gray-400 border-gray-400/20", dot: "bg-gray-400" },
+  7: { label: "Executed", color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20", dot: "bg-indigo-500" },
 }
 
 export default function ProposalDetailPage() {
@@ -57,8 +57,8 @@ export default function ProposalDetailPage() {
   const stateIdx = Number(proposalState ?? 0);
   const stateData = statusMap[stateIdx] || statusMap[0];
 
-  const forVotes = Number(votes?.[0] ?? 0);
-  const againstVotes = Number(votes?.[1] ?? 0);
+  const againstVotes = Number(votes?.[0] ?? 0);
+  const forVotes = Number(votes?.[1] ?? 0);
   const abstainVotes = Number(votes?.[2] ?? 0);
   const totalVotes = forVotes + againstVotes + abstainVotes;
 
@@ -75,7 +75,7 @@ export default function ProposalDetailPage() {
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
           <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium border ${stateData.color}`}>
-            <span className={`h-2 w-2 rounded-full ${stateData.color.split(' ')[0]}`} />
+            <span className={`h-2 w-2 rounded-full ${stateData.dot}`} />
             {stateData.label}
           </span>
           <span className="text-xs text-stone-500">

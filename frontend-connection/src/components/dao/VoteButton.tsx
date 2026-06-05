@@ -16,11 +16,20 @@ export function VoteButton({ proposalId, support }: VoteButtonProps) {
   const [error, setError] = useState<string | null>(null);
 
   const { address } = useAccount();
+
   const { data: hasPass, isLoading: isCheckingPass } = useReadContract({
     address: CONTRACTS.CampusSoulboundNFT,
     abi: sbtAbi,
     functionName: "hasPass",
     args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  const { data: alreadyVoted, isLoading: isCheckingVoted } = useReadContract({
+    address: CONTRACTS.CampusGovernor,
+    abi: governorAbi,
+    functionName: "hasVoted",
+    args: address ? [BigInt(proposalId), address] : undefined,
     query: { enabled: !!address },
   });
 
@@ -63,7 +72,7 @@ export function VoteButton({ proposalId, support }: VoteButtonProps) {
     <div className="space-y-2">
       <button
         className={`flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white transition-colors disabled:opacity-50 ${buttonStyles[support as keyof typeof buttonStyles]}`}
-        disabled={isPending || isCheckingPass || !hasPass}
+        disabled={isPending || isCheckingPass || !hasPass || isCheckingVoted || alreadyVoted}
         onClick={handleVote}
       >
         {isPending ? (
@@ -75,7 +84,7 @@ export function VoteButton({ proposalId, support }: VoteButtonProps) {
         ) : (
           <Divide size={18} />
         )}
-        {isCheckingPass ? "Checking..." : isPending ? "Voting..." : !hasPass ? "No Pass" : `Vote ${buttonLabels[support as keyof typeof buttonLabels]}`}
+        {isCheckingPass ? "Checking..." : isPending ? "Voting..." : !hasPass ? "No Pass" : alreadyVoted ? "Voted" : `Vote ${buttonLabels[support as keyof typeof buttonLabels]}`}
       </button>
 
       {!hasPass && !isCheckingPass && (

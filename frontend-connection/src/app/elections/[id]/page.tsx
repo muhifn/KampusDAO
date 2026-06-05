@@ -110,6 +110,7 @@ export default function ElectionDetailPage() {
         abi: electionAbi,
         functionName: "vote",
         args: [BigInt(electionId), BigInt(candidateIndex)],
+        gas: BigInt(300_000),
       });
       setVotedCandidate(candidateIndex);
     } catch (err) {

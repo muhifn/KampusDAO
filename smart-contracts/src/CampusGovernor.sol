@@ -103,12 +103,11 @@ contract CampusGovernor is
     }
 
     function votingDelay() public view override returns (uint256) {
-        // Use block numbers for Sepolia (1 block = 12s, 1 day = 7200 blocks)
-        return 7200; // 1 day
+        return 1; // 1 block (~12 detik) - instan untuk demo hackathon
     }
 
     function votingPeriod() public view override returns (uint256) {
-        return 36000; // 5 days
+        return 300; // 300 blocks (~1 jam) - cukup untuk demo
     }
 
     function proposalThreshold() public pure override returns (uint256) {
