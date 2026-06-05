@@ -2,10 +2,10 @@
 // Generated from: forge build + deployed to Sepolia
 
 export const CONTRACTS = {
-  CampusSoulboundNFT: "0x51a780B6633E8D2ccAe59B1a48F47d3cfD0A5256" as const,
-  TimelockController: "0x282Fa321CE97b20136853A12B787F898E6c3E3A8" as const,
-  CampusGovernor: "0xAD7FD095874AEc5750fE8EBbD9f51624102BC8Bd" as const,
-  CampusElection: "0xeD0bA9dc3639CFB58e66C593A567e158e01e9332" as const,
+  CampusSoulboundNFT: "0x9Fa19CD9D9a8c8CFE7030384aE42bF3E2b58b10F" as const,
+  TimelockController: "0xAA5E871ADC9A01dC4A3CC78a3E9841876844357E" as const,
+  CampusGovernor: "0x7B88e348c691f371aae4b63Eb6314366D7cc12e5" as const,
+  CampusElection: "0x23Bf27D39748bB77A4fbbD9740B1FEE067081E97" as const,
 } as const;
 
 // IPFS Configuration
