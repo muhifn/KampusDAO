@@ -27,7 +27,7 @@ export function useProposals() {
       
       const blockNumber = await publicClient.getBlockNumber();
       const BLOCKS_BACK = BigInt(50000);
-      const fromBlock = blockNumber > BLOCKS_BACK ? blockNumber - BLOCKS_BACK : 0n;
+      const fromBlock = blockNumber > BLOCKS_BACK ? blockNumber - BLOCKS_BACK : BigInt(0);
 
       const logs = await publicClient.getContractEvents({
         address: CONTRACTS.CampusGovernor,
