@@ -26,7 +26,7 @@ export function useProposals() {
       setError(null);
       
       const blockNumber = await publicClient.getBlockNumber();
-      const BLOCKS_BACK = 50000n;
+      const BLOCKS_BACK = BigInt(50000);
       const fromBlock = blockNumber > BLOCKS_BACK ? blockNumber - BLOCKS_BACK : 0n;
 
       const logs = await publicClient.getContractEvents({
