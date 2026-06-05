@@ -1,0 +1,16 @@
+# Ignore unwanted files and directories for Vercel deploys
+node_modules/
+.next/
+.vercel/
+.env*
+*.local
+*.log
+.DS_Store
+.vscode/
+.git/
+.gitignore
+
+# Ignore local docs/not needed files
+AGENTS.md
+CLAUDE.md
+DESIGN.md
