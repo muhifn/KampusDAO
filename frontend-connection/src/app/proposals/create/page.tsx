@@ -59,9 +59,15 @@ export default function CreateProposalPage() {
       setIsSuccess(false);
       setTxHash(null);
 
-      const targets = actions.map((a) => a.target as `0x${string}`);
-      const values = actions.map((a) => BigInt(a.value || "0"));
-      const calldatas = actions.map((a) => (a.calldata || "0x") as `0x${string}`);
+      const targets = actions.length > 0
+        ? actions.map((a) => a.target as `0x${string}`)
+        : ["0x0000000000000000000000000000000000000000" as `0x${string}`];
+      const values = actions.length > 0
+        ? actions.map((a) => BigInt(a.value || "0"))
+        : [BigInt(0)];
+      const calldatas = actions.length > 0
+        ? actions.map((a) => (a.calldata || "0x") as `0x${string}`)
+        : ["0x" as `0x${string}`];
       const fullDescription = `# ${title}\n\n${description}`;
 
       const hash = await writeContractAsync({

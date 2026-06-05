@@ -25,8 +25,30 @@ export default function AdminElectionsPage() {
     try {
       setError(null);
       setSuccess(null);
+      
+      if (!startTime || !endTime) {
+        setError("Please set both start and end times");
+        return;
+      }
+      
       const startTs = Math.floor(new Date(startTime).getTime() / 1000);
       const endTs = Math.floor(new Date(endTime).getTime() / 1000);
+      const now = Math.floor(Date.now() / 1000);
+      
+      if (isNaN(startTs) || isNaN(endTs)) {
+        setError("Invalid date format");
+        return;
+      }
+      
+      if (startTs < now) {
+        setError("Start time must be in the future");
+        return;
+      }
+      
+      if (endTs <= startTs) {
+        setError("End time must be after start time");
+        return;
+      }
       
       await writeContractAsync({
         address: CONTRACTS.CampusElection,
@@ -132,6 +154,7 @@ export default function AdminElectionsPage() {
                   type="datetime-local"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
+                  min={new Date(Date.now() + 60000).toISOString().slice(0, 16)}
                   className="w-full rounded-lg bg-stone-800 border border-stone-700 px-4 py-2 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 />
               </div>
@@ -141,6 +164,7 @@ export default function AdminElectionsPage() {
                   type="datetime-local"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
+                  min={startTime || new Date(Date.now() + 60000).toISOString().slice(0, 16)}
                   className="w-full rounded-lg bg-stone-800 border border-stone-700 px-4 py-2 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 />
               </div>
