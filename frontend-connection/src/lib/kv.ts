@@ -6,11 +6,18 @@ const kvToken = process.env.VERCEL_KV_TOKEN;
 const redisUrl = process.env.REDIS_URL;
 const redisToken = process.env.REDIS_TOKEN;
 const prefix = "whitelist:";
-const client = kvUrl && kvToken
-  ? new Redis({ url: kvUrl, token: kvToken })
-  : redisUrl
-  ? new Redis({ url: redisUrl, token: redisToken })
-  : null;
+
+let client: InstanceType<typeof Redis> | null = null;
+
+if (kvUrl && kvToken) {
+  client = new Redis({ url: kvUrl, token: kvToken });
+} else if (redisUrl) {
+  if (redisToken) {
+    client = new Redis({ url: redisUrl, token: redisToken });
+  } else {
+    client = new Redis({ url: redisUrl });
+  }
+}
 const isProduction = process.env.NODE_ENV === "production";
 
 function ensureClient() {
