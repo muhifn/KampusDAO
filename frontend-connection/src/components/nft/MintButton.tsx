@@ -40,7 +40,7 @@ export function MintButton({ address }: MintButtonProps) {
         address: CONTRACTS.CampusSoulboundNFT,
         abi: sbtAbi,
         functionName: "claimPass",
-        gas: BigInt(300_000),
+        gas: BigInt(500_000),
       });
       
       setTxHash(hash);
